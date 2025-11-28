@@ -1,0 +1,138 @@
+
+
+body {
+      font-family: Arial, sans-serif;
+      background-image: url(Bitcoin_Money_Coins_Dollars_554763_1920x1080.jpg);
+      background-size: cover;   
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: white;
+      padding: 80px 110px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
+      font-size: 30px;
+      position: relative;
+      z-index: 2;
+    }
+    input { padding: 10px; width: 200px; margin-bottom: 10px; }
+
+
+    button {
+      padding: 10px 20px;
+      background: #28a745;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover { background: #218838; }
+
+    .top-photo {
+      position: absolute;
+      top: 18.4%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 350px;
+      opacity: 0.9;
+    }
+    #name-display {
+      font-size: 30px;
+      color: #333;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    /* Новые стили для рулетки */
+.ticker-container {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.7);
+    overflow: hidden;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    z-index: 3; /* Всегда поверх картинки и контейнера */
+}
+    .ticker-track {
+      display: inline-block;
+      white-space: nowrap;
+      padding-left: 100%;
+      animation: scroll 20s linear infinite;
+      color: #fff;
+      font-size: 20px;
+    }
+    .ticker-item {
+      display: inline-block;
+      margin-right: 50px;
+    }
+    @keyframes scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+
+  .ticker-track {
+  display: inline-block;
+  white-space: nowrap;
+  animation: scroll 60s linear infinite; /* увеличили время с 30s на 60s */
+  color: #fff;
+  font-size: 20px;
+}
+
+.top-photo {
+    position: absolute;
+    top: -30%;       
+    left: 50%;      
+    transform: translate(-50%, -50%);
+    width: 350px;   
+    opacity: 0.9;   
+    z-index: 2; /* На переднем плане поверх фона, но ниже рулетки */
+}
+
+.top-menu {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center; /* GOLD TYR по центру */
+  align-items: center;
+  padding: 20px 50px; /* место для часов справа */
+  font-family: Arial, sans-serif;
+  z-index: 5;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+.top-menu h1 {
+  font-size: 28px;
+  font-weight: bold;
+  background: linear-gradient(90deg, gold, orange, yellow, gold);
+  background-size: 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 5s linear infinite;
+  margin: 0;
+}
+
+@keyframes shine {
+  0% { background-position: 0% 0; }
+  100% { background-position: 100% 0; }
+}
+
+#clock {
+  position: absolute;
+  right: 100px;          /* справа */
+  background: white;     /* белый квадрат */
+  color: black;          /* черный текст */
+  font-size: 24px;
+  font-weight: bold;
+  padding: 5px 100px;    /* отступы внутри квадрата */
+  border-radius: 5px;    /* скругление углов */
+  box-shadow: 0 0 5px rgba(0,0,0,0.3);
+}

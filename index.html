@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Главная</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    #clock { position: fixed; top: 10px; right: 20px; font-size: 24px; background: rgba(255,255,255,0.7); color: #000; padding: 5px 10px; border-radius: 8px; }
+    canvas { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9999; }
+    #enable-sound { position: fixed; bottom: 20px; right: 20px; padding: 10px 20px; font-size: 18px; cursor: pointer; z-index: 10000; }
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+  <header class="top-menu">
+    <h1 style="font-size: 88px;">GOLD TYR (OSMAN)</h1>
+    <div></div>
+    <div id="clock"></div>
+  </header>
+
+  <div class="container">
+    <h1 style="font-size: 70px; margin-bottom: 70px;">Deposit 🎉🎉🎉</h1>
+    <h1 style="font-size: 50px;" id="name-display">Загрузка...</h1>
+    <img src="american-dollar-bills-removebg-preview.png" alt="Фото" class="top-photo">
+  </div>
+
+  <div class="ticker-container">
+    <div class="ticker-track" id="ticker"></div>
+  </div>
+
+  <!-- 🎵 Музыка -->
+  <audio id="music" src="fireworks.mp3" preload="auto"></audio>
+  <button id="enable-sound">Включить звук 🔊</button>
+
+  <!-- 🎆 Канвас для фейерверков -->
+  <canvas id="fireworks"></canvas>
+
+  <script>
+    // ----------------- Firebase -----------------
+     const firebaseConf = {
+      apiKey: "AIzaSyDy4s9SMDHBuqAc39luArUoB9-cu0jcktg",
+      authDomain: "teoman-130e4.firebaseapp.com",
+      projectId: "teoman-130e4",
+      storageBucket: "teoman-130e4.firebasestorage.app",
+      messagingSenderId: "965421552184",
+      appId: "1:965421552184:web:3d592a3b428a9fdcd50ccd",
+      measurementId: "G-FCEMR7DCGT"
+  };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConf);
+    const db = firebase.database();
+    const nameDisplay = document.getElementById("name-display");
+    const music = document.getElementById("music");
+
+    let lastName = null;
+    let soundEnabled = false;
+
+    // Кнопка активации звука
+    document.getElementById("enable-sound").addEventListener("click", () => {
+      soundEnabled = true;
+      document.getElementById("enable-sound").style.display = "none"; 
+      music.play().catch(()=>{}); 
+      music.pause();
+    });
+
+    db.ref("latestName").on("value", snapshot => {
+      const name = snapshot.val();
+      nameDisplay.textContent = (name || "Имя пока не задано") + " 💵";
+
+      if (name !== lastName && name !== null) {
+        music.currentTime = 0;
+        music.play().catch(err => console.log("Не удалось воспроизвести:", err));
+        launchFireworks(); // 🎆 Запускаем фейерверк
+      }
+      lastName = name;
+    });
+
+    // ----------------- Часы -----------------
+    const clock = document.getElementById("clock");
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2,'0');
+      const m = String(now.getMinutes()).padStart(2,'0');
+      const s = String(now.getSeconds()).padStart(2,'0');
+      clock.textContent = `${h}:${m}:${s}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // ----------------- Фейерверки -----------------
+    const canvas = document.getElementById("fireworks");
+  const ctx = canvas.getContext("2d");
+  let particles = [];
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener("resize", resizeCanvas);
+  resizeCanvas();
+
+  function random(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  function createFirework(x, y) {
+    const count = 100; // 💥 Больше частиц
+    for (let i = 0; i < count; i++) {
+      const angle = (i / count) * Math.PI * 2;
+      const speed = random(2, 7);
+      particles.push({
+        x, y,
+        dx: Math.cos(angle) * speed,
+        dy: Math.sin(angle) * speed,
+        life: 120,
+        color: `hsl(${random(0,360)},100%,50%)`
+      });
+    }
+  }
+
+  function updateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach((p, i) => {
+      p.x += p.dx;
+      p.y += p.dy;
+      p.dy += 0.05; // гравитация
+      p.life--;
+      ctx.fillStyle = p.color;
+      ctx.fillRect(p.x, p.y, 3, 3);
+      if (p.life <= 0) particles.splice(i, 1);
+    });
+    requestAnimationFrame(updateParticles);
+  }
+  updateParticles();
+
+  // 🎆 Запуск серии фейерверков на 5 секунд
+  function launchFireworks() {
+    const duration = 5000; // 5 секунд
+    const interval = 300;  // каждые 0.3 секунды новый фейерверк
+    const start = Date.now();
+
+    function spawn() {
+      const x = random(canvas.width * 0.1, canvas.width * 0.9);
+      const y = random(canvas.height * 0.1, canvas.height * 0.5);
+      createFirework(x, y);
+
+      if (Date.now() - start < duration) {
+        setTimeout(spawn, interval);
+      }
+    }
+    spawn();
+  }
+  </script>
+
+  <script>
+  const FINNHUB_KEY = "d3d57d9r01qmnfgg6r0gd3d57d9r01qmnfgg6r10";
+
+  const stockTickers = ['AAPL','GOOGL','TSLA','MSFT','AMZN','NFLX'];
+  const cryptoTickers = ['bitcoin','ethereum','ripple','dogecoin','litecoin','cardano'];
+
+  function getRandom(arr) {
+    return arr[Math.floor(Math.random()*arr.length)];
+  }
+
+  async function getStockPrice(ticker) {
+    try {
+      const res = await fetch(`https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${FINNHUB_KEY}`);
+      const data = await res.json();
+      if(data.c) return `${ticker}: $${data.c.toFixed(2)}`;
+      return `${ticker}: Нет данных`;
+    } catch(e) {
+      return `${ticker}: Ошибка`;
+    }
+  }
+
+  async function getCryptoPrice(id) {
+    try {
+      const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd`);
+      const data = await res.json();
+      if(data[id]) return `${id.toUpperCase()}: $${data[id].usd}`;
+      return `${id.toUpperCase()}: Нет данных`;
+    } catch(e) {
+      return `${id.toUpperCase()}: Ошибка`;
+    }
+  }
+
+  async function generateTickerItems(count = 20) {
+    const items = [];
+    for(let i = 0; i < count; i++) {
+      if(Math.random() < 0.5) {
+        const stock = getRandom(stockTickers);
+        items.push(await getStockPrice(stock));
+      } else {
+        const crypto = getRandom(cryptoTickers);
+        items.push(await getCryptoPrice(crypto));
+      }
+    }
+    return items;
+  }
+
+  async function startTicker() {
+    const ticker = document.getElementById("ticker");
+    const items = await generateTickerItems(30);
+    ticker.innerHTML = items.map(item => `<span class="ticker-item">${item}</span>`).join("");
+  }
+
+  startTicker();
+  </script>
+</body>
+</html>

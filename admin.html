@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Админ панель</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Админ панель</h1>
+    <input type="text" id="name-input" placeholder="Введите имя">
+    <button onclick="saveName()">Сохранить</button>
+    <p id="status"></p>
+  </div>
+
+  <script>
+    // 🔑 Вставь сюда свой Firebase конфиг
+     const firebaseConfig = {
+      apiKey: "AIzaSyDy4s9SMDHBuqAc39luArUoB9-cu0jcktg",
+      authDomain: "teoman-130e4.firebaseapp.com",
+      projectId: "teoman-130e4",
+      storageBucket: "teoman-130e4.firebasestorage.app",
+      messagingSenderId: "965421552184",
+      appId: "1:965421552184:web:3d592a3b428a9fdcd50ccd",
+      measurementId: "G-FCEMR7DCGT"
+  };
+      
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    function saveName() {
+      const name = document.getElementById("name-input").value.trim();
+      if (name) {
+        db.ref("latestName").set(name)
+          .then(() => document.getElementById("status").textContent = "Имя сохранено!")
+          .catch(err => alert("Ошибка: " + err));
+      } else {
+        document.getElementById("status").textContent = "Введите имя!";
+      }
+    }
+  </script>
+</body>
+</html>
